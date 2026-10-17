@@ -16,6 +16,9 @@ public class FollowPath : MonoBehaviour
 
     public GameObject helipadWaypoint;
     public GameObject ruinsWaypoint;
+    public GameObject selectedWaypoint;
+
+    private bool alreadyFollowingPath = false;
 
     // Start is called before the first frame update
     void Start()
@@ -28,45 +31,60 @@ public class FollowPath : MonoBehaviour
 
     public void GoToHeli()
     {
+        if (alreadyFollowingPath) return;
+        currentWP = 0;
         if (g.AStar(currentNode, helipadWaypoint))
-            Debug.Log("Going to Helipad");
+            g.printPath();
         else
             Debug.Log("Couldn't find path to Helipad");
     }
 
     public void GoToRuin()
     {
+        if (alreadyFollowingPath) return;
+        currentWP = 0;
         if (g.AStar(currentNode, ruinsWaypoint))
-            Debug.Log("Going to Ruins");
+            g.printPath();
         else
             Debug.Log("Couldn't find path to Ruins");
     }
 
-    // Update is called once per frame
-    void LateUpdate()
+    public void GoToSelected()
+    {
+        if (alreadyFollowingPath || selectedWaypoint == null) return;
+        currentWP = 0;
+        if (g.AStar(currentNode, selectedWaypoint))
+            g.printPath();
+        else
+            Debug.Log("Couldn't find path to selected waypoint");
+    }
+
+    
+    void Update()
     {
         //Testear si no hay un camino definido (empty path) o currentWP esta ya al final del camino
-        if (g.getPathLength() == 0 || transform.position == g.getPathPoint(g.getPathLength() - 1).transform.position)
-            return;
-        else
-            Debug.Log("Path Found");
+        if (g.getPathLength() == 0) return;
+        bool atEndOfPath = Vector3.Distance(transform.position, g.getPathPoint(g.getPathLength() - 1).transform.position) <= accuracy;
+        if (atEndOfPath) { alreadyFollowingPath = false; return; }
         //Guardamos en currentNode el nodo que tenemos mas cercano en este momento
         currentNode = GetClosestNode();
         //Si estamos suficientemente cerca al nodo currentWP, pasamos a buscar el siguiente
         if (Vector3.Distance(transform.position, g.getPathPoint(currentWP).transform.position) <= accuracy)
-            currentWP++;
+            { currentWP++; Debug.Log("Increasing currentWP " + currentWP); }
         //Si aun no hemos llegado al final del camino, nos dirigimos al siguiente nodo
         if (transform.position != g.getPathPoint(g.getPathLength() - 1).transform.position)
         {
-            Debug.Log("Going to next waypoint");
+            alreadyFollowingPath = true;
             //Guardamos en goal el nuevo nodo a visitar
             goal = g.getPathPoint(currentWP).transform;
             //Miramos hacia nuestro destino (goal)
-            Quaternion targetRotation = Quaternion.LookRotation(goal.position);
+            Vector3 direction = goal.position - transform.position;
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotSpeed * Time.deltaTime);
             //Movemos el tanque
             transform.position = Vector3.MoveTowards(transform.position, goal.position, speed * Time.deltaTime);
         }
+            
         g.debugDraw();
 
     }
@@ -85,5 +103,13 @@ public class FollowPath : MonoBehaviour
             }
         }
         return closestNode;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.magenta;
+
+        if (goal != null)
+            Gizmos.DrawLine(transform.position, goal.position);
     }
 }

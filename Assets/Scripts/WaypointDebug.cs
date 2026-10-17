@@ -7,7 +7,7 @@ public class WaypointDebug : MonoBehaviour {
 
 	void RenameWPs(GameObject overlook)
 	{
-		GameObject[] gos;
+		/*GameObject[] gos;
 	    gos = GameObject.FindGameObjectsWithTag("wp"); 
 	    int i = 1;
 	    foreach (GameObject go in gos)  
@@ -17,7 +17,7 @@ public class WaypointDebug : MonoBehaviour {
 	     		go.name = "WP" + string.Format("{0:000}",i); 
 	     		i++; 
 	     	} 
-	    }	
+	    }	*/
 	}
 
 	void OnDestroy()
