@@ -70,7 +70,7 @@ public class FollowPath : MonoBehaviour
         currentNode = GetClosestNode();
         //Si estamos suficientemente cerca al nodo currentWP, pasamos a buscar el siguiente
         if (Vector3.Distance(transform.position, g.getPathPoint(currentWP).transform.position) <= accuracy)
-            { currentWP++; Debug.Log("Increasing currentWP " + currentWP); }
+            currentWP++;
         //Si aun no hemos llegado al final del camino, nos dirigimos al siguiente nodo
         if (transform.position != g.getPathPoint(g.getPathLength() - 1).transform.position)
         {

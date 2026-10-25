@@ -1973,7 +1973,7 @@ MonoBehaviour:
   wpManager: {fileID: 486132211}
   helipadWaypoint: {fileID: 34693047}
   ruinsWaypoint: {fileID: 2075256743}
-  selectedWaypoint: {fileID: 0}
+  selectedWaypoint: {fileID: 749731470}
 --- !u!1 &1779962335
 GameObject:
   m_ObjectHideFlags: 0
